@@ -1901,6 +1901,8 @@ fn maybe_install_llvm_dylib(builder: &Builder,
                             image: &Path) {
     let src_libdir = builder
         .llvm_out(target)
+        .join("lib/rustlib")
+        .join(&*target)
         .join("lib");
 
     // Usually libLLVM.so is a symlink to something like libLLVM-6.0.so.
@@ -1967,7 +1969,9 @@ impl Step for LlvmTools {
         let src_bindir = builder
             .llvm_out(target)
             .join("bin");
-        let dst_bindir = image.join("bin");
+        let dst_bindir = image.join("lib/rustlib")
+            .join(&*target)
+            .join("bin");
         t!(fs::create_dir_all(&dst_bindir));
         for tool in LLVM_TOOLS {
             let exe = src_bindir.join(exe(tool, &target));
